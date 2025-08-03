@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="utf-8" />
+    <!--
+      The viewport meta tag ensures the application takes up the full screen
+      on mobile devices and respects the notch and status bar areas on
+      devices like the iPhone 14 Pro. The `viewport-fit=cover` value
+      instructs Safari to allow the web content to extend into the safe
+      areas, which is appropriate for a fullscreen PWA.
+    -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="style.css" />
+    <title>DaCapo.</title>
+  </head>
+  <body>
+    <!--
+      The header contains the application title. A minimalist
+      typographic treatment evokes the understated elegance of iOS
+      applications. The header remains static while pages change below.
+    -->
+    <header>
+      <h1>DaCapo.</h1>
+    </header>
+    <!--
+      The main area holds the different application pages. Only one
+      section is visible at a time; others are hidden via the `active`
+      class controlled in JavaScript. Each page is self‑contained and
+      implements a discrete feature: Répertoire, Métronome & Accordeur,
+      Agenda, and Matériel.
+    -->
+    <main id="app">
+      <!-- Répertoire page -->
+      <section id="repertoire" class="page active">
+        <h2>Répertoire</h2>
+        <!-- Form to add a new piece. Required inputs ensure entries are
+             not left blank. After submission the form resets via JS. -->
+        <form id="repertoire-form" class="form-row">
+          <input
+            type="text"
+            id="rep-title"
+            placeholder="Titre de la pièce"
+            required
+          />
+          <input
+            type="text"
+            id="rep-composer"
+            placeholder="Compositeur"
+            required
+          />
+          <button type="submit">Ajouter</button>
+        </form>
+        <ul id="repertoire-list" class="item-list"></ul>
+      </section>
+
+      <!-- Métronome & Accordeur page -->
+      <section id="metronome" class="page">
+        <h2>Métronome &amp; Accordeur</h2>
+        <div class="metronome-container">
+          <label for="bpm">Tempo&nbsp;(BPM)</label>
+          <input
+            type="range"
+            id="bpm"
+            min="30"
+            max="240"
+            value="120"
+          />
+          <span id="bpm-display">120</span>
+          <button id="metronome-toggle" class="primary">Démarrer</button>
+          <div id="metronome-visual" class="metronome-visual"></div>
+          <!-- Tap tempo button allows users to tap a rhythm to set the BPM -->
+          <button id="tap-tempo" class="secondary">Tap tempo</button>
+        </div>
+        <div class="tuner-container">
+          <button id="tuner-toggle" class="secondary">Accordeur&nbsp;A=442&nbsp;Hz</button>
+        </div>
+      </section>
+
+      <!-- Agenda page -->
+      <section id="agenda" class="page">
+        <h2>Agenda</h2>
+        <form id="agenda-form" class="form-row">
+          <input
+            type="text"
+            id="agenda-title"
+            placeholder="Titre de l'événement"
+            required
+          />
+          <input type="date" id="agenda-date" required />
+          <input type="time" id="agenda-time" />
+          <!-- Field to capture notes about pieces to be performed at the event -->
+          <textarea
+            id="agenda-note"
+            placeholder="Notes (œuvres jouées, programme, etc.)"
+          ></textarea>
+          <button type="submit">Ajouter</button>
+        </form>
+        <ul id="agenda-list" class="item-list"></ul>
+      </section>
+
+      <!-- Matériel & Accessoires page -->
+      <section id="materials" class="page">
+        <h2>Matériel&nbsp;&amp;&nbsp;Accessoires</h2>
+        <form id="materials-form" class="form-row">
+          <input
+            type="text"
+            id="material-name"
+            placeholder="Nom de l'article"
+            required
+          />
+          <!-- Optional quantity field -->
+          <input
+            type="number"
+            id="material-qty"
+            min="1"
+            placeholder="Qté"
+          />
+          <button type="submit">Ajouter</button>
+        </form>
+        <ul id="materials-list" class="item-list"></ul>
+      </section>
+
+      <!-- Sites utiles page -->
+      <section id="links" class="page">
+        <h2>Sites utiles</h2>
+        <form id="links-form" class="form-row">
+          <input
+            type="text"
+            id="link-name"
+            placeholder="Nom du site"
+            required
+          />
+          <input
+            type="url"
+            id="link-url"
+            placeholder="https://exemple.com"
+            required
+          />
+          <button type="submit">Ajouter</button>
+        </form>
+        <div id="links-container" class="links-container"></div>
+      </section>
+    </main>
+    <!--
+      Bottom navigation bar inspired by iOS tab bars. Each button
+      contains an inline SVG icon and a label. The `data-target`
+      attribute connects the button to its corresponding page. When a
+      button is active, its text and icon colour darken via CSS. A
+      fifth tab, “Sites”, allows users to catalogue useful links.
+    -->
+    <nav>
+      <!-- Répertoire tab -->
+      <button data-target="repertoire" class="active">
+        <svg width="24" height="24" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M9 13c0 1.105-1.12 2-2.5 2S4 14.105 4 13s1.12-2 2.5-2 2.5.895 2.5 2" />
+          <path fill-rule="evenodd" d="M9 3v10H8V3z" />
+          <path d="M8 2.82a1 1 0 0 1 .804-.98l3-.6A1 1 0 0 1 13 2.22V4L8 5z" />
+        </svg>
+        <span>Répertoire</span>
+      </button>
+      <!-- Metronome tab -->
+      <button data-target="metronome">
+        <svg width="24" height="24" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M8 2a.5.5 0 0 1 .5.5V4a.5.5 0 0 1-1 0V2.5A.5.5 0 0 1 8 2M3.732 3.732a.5.5 0 0 1 .707 0l.915.914a.5.5 0 1 1-.708.708l-.914-.915a.5.5 0 0 1 0-.707M2 8a.5.5 0 0 1 .5-.5h1.586a.5.5 0 0 1 0 1H2.5A.5.5 0 0 1 2 8m9.5 0a.5.5 0 0 1 .5-.5h1.5a.5.5 0 0 1 0 1H12a.5.5 0 0 1-.5-.5m.754-4.246a.39.39 0 0 0-.527-.02L7.547 7.31A.91.91 0 1 0 8.85 8.569l3.434-4.297a.39.39 0 0 0-.029-.518z" />
+          <path fill-rule="evenodd" d="M6.664 15.889A8 8 0 1 1 9.336.11a8 8 0 0 1-2.672 15.78zm-4.665-4.283A11.95 11.95 0 0 1 8 10c2.186 0 4.236.585 6.001 1.606a7 7 0 1 0-12.002 0" />
+        </svg>
+        <span>Métronome</span>
+      </button>
+      <!-- Agenda tab -->
+      <button data-target="agenda">
+        <svg width="24" height="24" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5M1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4z" />
+        </svg>
+        <span>Agenda</span>
+      </button>
+      <!-- Materials tab -->
+      <button data-target="materials">
+        <svg width="24" height="24" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path fill-rule="evenodd" d="M2.5 12a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5m0-4a.5.5 0 0 1 .5-.5h10a.5.5 0 0 1 0 1H3a.5.5 0 0 1-.5-.5" />
+        </svg>
+        <span>Matériel</span>
+      </button>
+      <!-- Useful sites tab -->
+      <button data-target="links">
+        <svg width="24" height="24" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <path d="M4.715 6.542 3.343 7.914a3 3 0 1 0 4.243 4.243l1.828-1.829A3 3 0 0 0 8.586 5.5L8 6.086a1 1 0 0 0-.154.199 2 2 0 0 1 .861 3.337L6.88 11.45a2 2 0 1 1-2.83-2.83l.793-.792a4 4 0 0 1-.128-1.287z" />
+          <path d="M6.586 4.672A3 3 0 0 0 7.414 9.5l.775-.776a2 2 0 0 1-.896-3.346L9.12 3.55a2 2 0 1 1 2.83 2.83l-.793.792c.112.42.155.855.128 1.287l1.372-1.372a3 3 0 1 0-4.243-4.243z" />
+        </svg>
+        <span>Sites</span>
+      </button>
+    </nav>
+    <script src="script.js"></script>
+    <script>
+      // Register the service worker to enable offline usage and
+      // install the PWA when added to the home screen. Registration is
+      // deferred until after the window's load event to avoid
+      // interfering with first paint. If service workers are not
+      // supported, registration silently fails.
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("service-worker.js")
+            .catch((err) => console.error("SW registration failed:", err));
+        });
+      }
+    </script>
+  </body>
+</html>
